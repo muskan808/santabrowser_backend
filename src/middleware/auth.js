@@ -5,8 +5,11 @@ import { ApiError } from '../utils/apiError.js';
 
 export const requireAuth = async (req, _res, next) => {
   try {
-    const token = req.cookies?.[env.cookieName];
+    const authHeader = req.headers.authorization;
+    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    const token = req.cookies?.[env.cookieName] || bearerToken;
     if (!token) throw new ApiError(401, 'Authentication required');
+
     const payload = verifyAccessToken(token);
     const user = await User.findById(payload.sub);
     if (!user) throw new ApiError(401, 'Invalid authentication');
