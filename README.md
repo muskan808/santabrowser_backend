@@ -110,3 +110,4 @@ Troubleshooting
 - If you see missing env variable errors, verify your `.env` file and that `NODE_ENV` is not `test`.
 - Check Cloudinary credentials if uploads fail.
 
+Loom video link: https://www.loom.com/share/1e9b5a3082d94a769773c28aa446bb4f
