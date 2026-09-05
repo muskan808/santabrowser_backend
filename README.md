@@ -110,4 +110,38 @@ Troubleshooting
 - If you see missing env variable errors, verify your `.env` file and that `NODE_ENV` is not `test`.
 - Check Cloudinary credentials if uploads fail.
 
+
+Real-time notifications (WebSocket)
+---------------------------------
+
+- Where: after a successful upload the backend emits a per-user notification from `src/controllers/fileController.js` by calling `emitUploadNotification(...)`.
+- Socket server: `src/socket.js` sets up a Socket.IO server and uses rooms named `user:<userId>`.
+- Event: `upload:notification` is emitted to the user's room with payload `{ userId, file, message }`.
+- Debug/test endpoint: for development there is an unprotected helper `POST /api/debug/notify` (see `src/routes/debugRoutes.js`) that accepts JSON `{ userId, message }` and will emit a notification to the given user room.
+
+Quick local test
+
+1. Start backend (dev):
+
+```bash
+cd backend
+npm run dev
+```
+
+2. Start the frontend (dev) and open the Dashboard, or use a Node client that connects and joins a user room.
+
+3. Trigger a test notification from the backend (replace `u_test` with the current user's id):
+
+```bash
+curl -s -X POST -H "Content-Type: application/json" \
+	-d '{"userId":"u_test","message":"Hello from test"}' \
+	http://localhost:5001/api/debug/notify
+```
+
+4. The connected client in the `user:u_test` room should receive the `upload:notification` event and the Dashboard will display a temporary notice.
+
+Security note
+- The debug endpoint is intended for development only. Remove or protect it before deploying to production.
+
+
 Loom video link: https://www.loom.com/share/1e9b5a3082d94a769773c28aa446bb4f
