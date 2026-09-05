@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/authRoutes.js';
 import fileRoutes from './routes/fileRoutes.js';
+import debugRoutes from './routes/debugRoutes.js';
 import { swaggerSpec } from './docs/swagger.js';
 import { env } from './config/env.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
@@ -22,6 +23,7 @@ app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeader
 app.get('/health', (_req, res) => res.json({ success: true, status: 'ok' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/debug', debugRoutes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(notFound);
 app.use(errorHandler);

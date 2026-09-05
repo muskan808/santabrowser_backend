@@ -1,5 +1,6 @@
 import File from '../models/File.js';
 import { uploadBuffer, destroyAsset } from '../services/cloudinaryService.js';
+import { emitUploadNotification } from '../socket.js';
 import { ApiError } from '../utils/apiError.js';
 import { searchFiles } from '../services/searchService.js';
 
@@ -28,6 +29,13 @@ export const uploadFile = async (req, res) => {
     size: req.file.size,
     tags
   });
+
+  emitUploadNotification({
+    userId: req.user._id,
+    file,
+    message: `Uploaded ${file.originalName}`
+  });
+
   res.status(201).json({ success: true, file });
 };
 
